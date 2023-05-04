@@ -1,66 +1,99 @@
 <script lang="ts">
-    import DataTable from 'datatables.net-vue3';
-    import DataTablesCore from 'datatables.net';
-    DataTable.use(DataTablesCore);
+    // import DataTable from 'datatables.net-vue3';
+    // import DataTablesCore from 'datatables.net';
+    import draggable from 'vuedraggable'
+    // DataTable.use(DataTablesCore);
 
-    let columnDef:any[] = [{ name: 'column1', style: 'regular'}, {name: 'column2', style: 'red'}];
-    let columns:any[] = [];
-    for (let column of columnDef) {
-        columns.push({
-            name: column.name,
-            data: column.name,
-            title: column.name,
-            className: column.style
-        });
-    }
+    const columnDef:any[] = [{ name: 'ID', style: 'regular'}, {name: 'NOMBRE', style: 'red'}, {name: 'APELLIDO', style: 'blue'}];
+    const columns: any[] = [
+      {
+        ID: "1",
+        NOMBRE: "John",
+        APELLIDO: "Doe",
+      },
+      {
+        ID: "2",
+        NOMBRE: "Jane",
+        APELLIDO: "Doe",
+      },
+      {
+        ID: "3",
+        NOMBRE: "Luke",
+        APELLIDO: "Skywalker",
+      },
+      {
+        ID: "4",
+        NOMBRE: "Leia",
+        APELLIDO: "Organa",
+      },
+    ];
+    const headers:string[] = columnDef.map(header => header.name)
 
     export default {
-        components: {
-            DataTable,
+    components: {
+            draggable,
+            // DataTable,
         },
         data() {
             return {
-                columns: columns,
-                data: [{
-                    column1: "value 1",
-                    column2: "value 1",
-                    column3: "value 1",
-                },
-                {
-                    column1: "value 2",
-                    column2: "value 2",
-                    column3: "value 2",
-                },
-                {
-                    column1: "value 3",
-                    column2: "value 3",
-                    column3: "value 3",
-                },
-                {
-                    column1: "value 4",
-                    column2: "value 4",
-                    column3: "value 4",
-                },]
+                headers,
+                list: columns,
+                dragging: false
             }
         }
     }
 </script>
 
 <template>
-    <DataTable :data="data" :columns="columns">
-    </DataTable>
+    <!-- <DataTable :data="data" :columns="columns">
+    </DataTable> -->
+
+    <div class="row">
+    <div class="col-8">
+      <h3>Draggable table</h3>
+
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <draggable v-model="headers" tag="tr" :item-key="(key: any) => key">
+            <template #item="{ element: header }">
+              <th scope="col">
+                {{ header }}
+              </th>
+            </template>
+          </draggable>
+        </thead>
+        <tbody>
+          <tr v-for="item in list" :key="item.name">
+            <td v-for="header in headers" :key="header">{{ item[header] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <rawDisplayer class="col-2" :value="list" title="List" />
+
+    <rawDisplayer class="col-2" :value="headers" title="Headers" />
+  </div>
 </template>
 
 <style lang="scss">
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
     .odd {
         .regular {
             background-color: #333;
             color: #fafafa;
         }
-
         .red {
             background-color: #fafafa;
             color: #f00;
+        };
+        .blue {
+            background-color: #fafafa;
+            color: rgb(0, 94, 255);
         };
     }
     .regular {
@@ -69,6 +102,10 @@
     }
     .red {
         background-color: #f00;
+        color: #fafafa;
+    }
+    .blue {
+        background-color: rgb(0, 94, 255);
         color: #fafafa;
     }
 </style>
